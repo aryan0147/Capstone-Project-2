@@ -142,7 +142,7 @@ ruamel.yaml==0.18.6
 ruamel.yaml.clib==0.2.8
 s3fs==2024.6.1
 s3transfer==0.10.2
-scikit-learn==1.5.1
+scikit-learn==1.5.2
 scipy==1.14.0
 scmrepo==3.3.6
 seaborn==0.13.2

@@ -13,4 +13,4 @@ RUN pip install -r requirements.txt
 
 # CMD ["python", "app.py"]
 # CMD ["gunicorn", "--bind", "0.0.0.0:${PORT:-8000}", "--timeout", "120", "app:app"]
-CMD /bin/sh -c "gunicorn --bind 0.0.0.0:${PORT:-8000} --timeout 120 app:app"
+CMD /bin/sh -c "gunicorn --bind 0.0.0.0:${PORT:-10000} --timeout 120 app:app"
