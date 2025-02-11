@@ -125,14 +125,22 @@ def get_root_directory() -> str:
     )
 
 
+# Set up DagsHub credentials for MLflow tracking
+dagshub_token = os.getenv("DAGSHUB_PAT")
+if not dagshub_token:
+    raise EnvironmentError("DAGSHUB_PAT environment variable is not set")
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
+dagshub_url = "https://dagshub.com"
+repo_owner = "aryan0147"
+repo_name = "Capstone-Project-2"
+
+
 def main():
     try:
-        mlflow.set_tracking_uri(
-            "https://dagshub.com/aryan0147/Capstone-Project-2.mlflow"
-        )
-        dagshub.init(
-            repo_owner="aryan0147", repo_name="Capstone-Project-2", mlflow=True
-        )
+        mlflow.set_tracking_uri(f"{dagshub_url}/{repo_owner}/{repo_name}.mlflow")
         mlflow.set_experiment("dvc-pipeline-runs")
 
         with mlflow.start_run() as run:

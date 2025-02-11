@@ -1,0 +1,78 @@
+
+name: CICD Pipeline
+
+on: push
+
+jobs:
+  project-testing:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Cache Python dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run pipeline
+        env:
+          DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
+        run: |
+          dvc repro
+
+      # - name: Run model test
+      #   env:
+      #     DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
+      #   run: |
+      #     python -m unittest tests/test_model.py
+
+      # - name: Promote model to production
+      #   if: success()
+      #   env:
+      #     DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
+      #   run: |
+      #     python scripts/promote_model.py
+
+      # - name: Run Flask app tests
+      #   if: success()
+      #   env:
+      #     DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
+      #   run: |
+      #     python -m unittest tests/test_flask_app.py
+
+      # - name: Log in to Docker Hub
+      #   if: success()
+      #   uses: docker/login-action@v2
+      #   with:
+      #     username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      #     password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+
+      # - name: Build Docker image
+      #   if: success()
+      #   run: |
+      #     docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/mini-project:latest .
+
+      # - name: Push Docker image to Docker Hub
+      #   if: success()
+      #   run: |
+      #     docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mini-project:latest
+
+      # # Added Step: Trigger Render Deployment
+      # - name: Deploy to Render
+      #   if: success()
+      #   run: |
+      #     curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}

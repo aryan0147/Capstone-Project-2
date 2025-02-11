@@ -19,6 +19,7 @@ from nltk.stem import WordNetLemmatizer
 from mlflow.tracking import MlflowClient
 import matplotlib.dates as mdates
 import dagshub
+import os
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
@@ -62,10 +63,19 @@ def preprocess_comment(comment):
 
 # Load the model and vectorizer from the model registry and local storage
 def load_model_and_vectorizer(model_name, model_version, vectorizer_path):
-    # Set MLflow tracking URI to your server
-    mlflow.set_tracking_uri("https://dagshub.com/aryan0147/Capstone-Project-2.mlflow")
+    # Set up DagsHub credentials for MLflow tracking
+    dagshub_token = os.getenv("DAGSHUB_PAT")
+    if not dagshub_token:
+        raise EnvironmentError("DAGSHUB_PAT environment variable is not set")
 
-    dagshub.init(repo_owner="aryan0147", repo_name="Capstone-Project-2", mlflow=True)
+    os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+    os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
+    dagshub_url = "https://dagshub.com"
+    repo_owner = "aryan0147"
+    repo_name = "Capstone-Project-2"
+
+    mlflow.set_tracking_uri(f"{dagshub_url}/{repo_owner}/{repo_name}.mlflow")
     client = MlflowClient()
     # Load the model from the Model Registry
     model_uri = f"models:/{model_name}/{model_version}"
