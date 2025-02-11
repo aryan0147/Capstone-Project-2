@@ -108,8 +108,13 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-2:latest
 
-      # # Added Step: Trigger Render Deployment
-      # - name: Deploy to Render
-      #   if: success()
-      #   run: |
-      #     curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+      - name: Deploy to Render
+        if: success()  # Runs only if all previous steps succeed
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}  # Retrieves the Render Deploy Hook URL from GitHub Secrets
+        run: |
+          if [[ -z "$RENDER_DEPLOY_HOOK" ]]; then
+            echo "Render Deploy Hook is missing!"  # Logs an error if the hook is not set
+            exit 1  # Exits the workflow to prevent an invalid request
+          fi
+          curl -X POST "$RENDER_DEPLOY_HOOK"  # Sends a POST request to trigger deployment
