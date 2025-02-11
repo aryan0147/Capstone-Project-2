@@ -16,9 +16,9 @@ COPY tfidf_vectorizer.pkl /app/tfidf_vectorizer.pkl
 EXPOSE 10000
 
 # Start the Flask app with Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:${PORT:-10000}", "--timeout", "120", "app:app"]
+# CMD ["gunicorn", "--bind", "0.0.0.0:${PORT:-10000}", "--timeout", "120", "app:app"]
 
 
 # CMD ["python", "app.py"]
 # CMD ["gunicorn", "--bind", "0.0.0.0:${PORT:-8000}", "--timeout", "120", "app:app"]
-# CMD /bin/sh -c "gunicorn --bind 0.0.0.0:${PORT:-10000} --timeout 120 app:app"
+CMD /bin/sh -c "gunicorn --bind 0.0.0.0:${PORT:-10000} --timeout 120 app:app"
