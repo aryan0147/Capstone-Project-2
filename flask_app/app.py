@@ -18,7 +18,6 @@ from mlflow.tracking import MlflowClient
 import matplotlib.dates as mdates
 import dagshub
 import os
-from mlflow.tracking import MlflowClient
 
 app = Flask(__name__)
 
@@ -26,19 +25,9 @@ CORS(
     app,
     resources={r"/*": {"origins": "*"}},
     supports_credentials=True,
-    allow_headers=["Content-Type", "Authorization"],
-    methods=["OPTIONS", "GET", "POST"],
+    allow_headers=["Content-Type"],
+    methods=["OPTIONS", "GET", "POST"],  # ✅ Explicitly allow OPTIONS requests
 )
-
-
-# ✅ Ensure OPTIONS requests receive a valid response
-@app.route("/predict_with_timestamps", methods=["OPTIONS"])
-@app.route("/predict", methods=["OPTIONS"])
-@app.route("/generate_chart", methods=["OPTIONS"])
-@app.route("/generate_wordcloud", methods=["OPTIONS"])
-@app.route("/generate_trend_graph", methods=["OPTIONS"])
-def handle_options():
-    return jsonify({"message": "Preflight OK"}), 200
 
 
 # Define the preprocessing function
@@ -100,21 +89,9 @@ def load_model_and_vectorizer(model_name, model_version, vectorizer_path):
     return model, vectorizer
 
 
-def get_latest_model_version(model_name):
-    """Fetch the latest model version from MLflow Model Registry."""
-    client = MlflowClient()
-    versions = client.get_latest_versions(model_name, stages=["Production"])
-
-    if versions:
-        return versions[0].version  # Get the latest production version
-    else:
-        raise ValueError(f"No production model found for {model_name}")
-
-
 # Initialize the model and vectorizer
-latest_version = get_latest_model_version("yt_chrome_plugin_model")
 model, vectorizer = load_model_and_vectorizer(
-    "yt_chrome_plugin_model", latest_version, "./tfidf_vectorizer.pkl"
+    "yt_chrome_plugin_model", "14", "./tfidf_vectorizer.pkl"
 )  # Update paths and versions as needed
 
 
