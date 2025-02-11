@@ -21,17 +21,13 @@ import os
 
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
-
-
-# Handle preflight (OPTIONS) requests to avoid CORS issues
-@app.route("/predict_with_timestamps", methods=["OPTIONS"])
-@app.route("/predict", methods=["OPTIONS"])
-@app.route("/generate_chart", methods=["OPTIONS"])
-@app.route("/generate_wordcloud", methods=["OPTIONS"])
-@app.route("/generate_trend_graph", methods=["OPTIONS"])
-def handle_options():
-    return jsonify({"message": "Preflight OK"}), 200
+CORS(
+    app,
+    resources={r"/*": {"origins": "*"}},
+    supports_credentials=True,
+    allow_headers=["Content-Type"],
+    methods=["OPTIONS", "GET", "POST"],  # ✅ Explicitly allow OPTIONS requests
+)
 
 
 # Define the preprocessing function
