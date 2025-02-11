@@ -1,7 +1,10 @@
-Capstone-Project-2
-==============================
+Chrome Extension Backend
+This repository contains the backend services for our Chrome extension.
 
-First End-to-End MLOps Project.
+🚀 Getting Started
+To install and use the Chrome extension, please visit the frontend repository, where you’ll find detailed setup instructions:
+
+👉 https://github.com/aryan0147/Capstone-2-frontend
 
 Project Organization
 ------------
