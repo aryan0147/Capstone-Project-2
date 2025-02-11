@@ -1,24 +1,27 @@
-# Install necessary dependencies
-RUN apt-get update && apt-get install -y libgomp1
+#  Use a minimal Python base image
+FROM python:3.10-slim
 
-# Install Python dependencies
-COPY requirements.txt /app/requirements.txt
-RUN pip install -r /app/requirements.txt
+#  Set working directory inside the container
+WORKDIR /app
 
-# Download NLTK datasets at build time
-RUN python -m nltk.downloader stopwords wordnet
+#  Install necessary system dependencies
+RUN apt-get update && apt-get install -y libgomp1 && rm -rf /var/lib/apt/lists/*
 
-# Copy application files
+#  Copy requirements first to leverage Docker cache
+COPY requirements.txt /app/
+
+# Install dependencies (no-cache to keep image small)
+RUN pip install --no-cache-dir -r requirements.txt
+
+#  Download NLTK datasets at build time
+RUN python -m nltk.downloader -d /app/nltk_data stopwords wordnet
+
+#  Copy application files after dependencies are installed
 COPY flask_app/ /app/
 COPY tfidf_vectorizer.pkl /app/tfidf_vectorizer.pkl
 
-# Expose correct port
+# Expose correct port (Render might use a dynamic port)
 EXPOSE 10000
 
-# Start the Flask app with Gunicorn
-# CMD ["gunicorn", "--bind", "0.0.0.0:${PORT:-10000}", "--timeout", "120", "app:app"]
-
-
-# CMD ["python", "app.py"]
-# CMD ["gunicorn", "--bind", "0.0.0.0:${PORT:-8000}", "--timeout", "120", "app:app"]
-CMD /bin/sh -c "gunicorn --bind 0.0.0.0:${PORT:-10000} --timeout 120 app:app"
+#  Run Gunicorn properly
+CMD ["gunicorn", "--bind", "0.0.0.0:10000", "--timeout", "120", "app:app"]
