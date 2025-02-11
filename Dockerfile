@@ -12,4 +12,5 @@ RUN pip install -r requirements.txt
 # EXPOSE 8000  # Gunicorn default port
 
 # CMD ["python", "app.py"]
-CMD ["gunicorn", "--bind", "0.0.0.0:${PORT:-8000}", "--timeout", "120", "app:app"]
+# CMD ["gunicorn", "--bind", "0.0.0.0:${PORT:-8000}", "--timeout", "120", "app:app"]
+CMD /bin/sh -c "gunicorn --bind 0.0.0.0:${PORT:-8000} --timeout 120 app:app"
