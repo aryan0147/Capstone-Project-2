@@ -90,9 +90,11 @@ model, vectorizer = load_model_and_vectorizer(
 )  # Update paths and versions as needed
 
 
-# @app.route("/")
-# def home():
-#     return "Welcome to our flask api"
+@app.route("/")
+def home():
+    return """<h2>Welcome to our Flask API!</h2>
+              <p>Check out our Chrome extension:</p>
+              <a href="https://github.com/aryan0147/Capstone-2-frontend" target="_blank">GitHub Repository</a>"""
 
 
 @app.route("/predict_with_timestamps", methods=["POST"])
