@@ -67,42 +67,46 @@ jobs:
         run: |
           pip install pytest
 
-      # - name: Run model test
-      #   env:
-      #     DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
-      #   run: |
-      #     python -m unittest tests/test_model.py
+      - name: Run model loading test
+        env:
+          DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
+        run: |
+          pytest scripts/test_load_model.py
 
-      # - name: Promote model to production
-      #   if: success()
-      #   env:
-      #     DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
-      #   run: |
-      #     python scripts/promote_model.py
+      - name: Run model signature test
+        env:
+            DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
+        run: |
+          pytest scripts/test_model_signature.py
 
-      # - name: Run Flask app tests
-      #   if: success()
-      #   env:
-      #     DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
-      #   run: |
-      #     python -m unittest tests/test_flask_app.py
+      - name: Run model performance test
+        env:
+            DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
+        run: |
+          pytest scripts/test_model_performance.py
 
-      # - name: Log in to Docker Hub
-      #   if: success()
-      #   uses: docker/login-action@v2
-      #   with:
-      #     username: ${{ secrets.DOCKER_HUB_USERNAME }}
-      #     password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Promote model to production
+        if: success()
+        env:
+            DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
+        run: python scripts/promote_model.py
 
-      # - name: Build Docker image
-      #   if: success()
-      #   run: |
-      #     docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/mini-project:latest .
+      - name: Log in to Docker Hub
+        if: success()
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # - name: Push Docker image to Docker Hub
-      #   if: success()
-      #   run: |
-      #     docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mini-project:latest
+      - name: Build Docker image
+        if: success()
+        run: |
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-2:latest .
+
+      - name: Push Docker image to Docker Hub
+        if: success()
+        run: |
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/capstone-2:latest
 
       # # Added Step: Trigger Render Deployment
       # - name: Deploy to Render

@@ -6,7 +6,7 @@ import yaml
 import logging
 import mlflow
 import mlflow.sklearn
-import dagshub
+import dagshub  
 import json
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -160,7 +160,7 @@ def main():
             y_test = test_data["category"].values
 
             input_example = pd.DataFrame(
-                X_test_tfidf.toarray()[:5], columns=vectorizer.get_feature_names_out()
+                X_test_tfidf.toarray()[:5], columns=vectorizer.get_feature_names_out() # type: ignore
             )
             signature = infer_signature(input_example, model.predict(X_test_tfidf[:5]))
 
