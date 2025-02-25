@@ -5,6 +5,8 @@
 **To install and use the Chrome extension, please visit the frontend repository, where you’ll find detailed setup instructions**:
 👉 *https://github.com/aryan0147/Capstone-2-frontend*
 
+VIDEO DEMO - https://www.youtube.com/watch?v=yJdWRSGu4Mc
+
 Project Organization
 ------------
 
